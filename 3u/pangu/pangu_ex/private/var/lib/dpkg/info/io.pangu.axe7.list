@@ -1,0 +1,14 @@
+/.
+/panguaxe
+/System
+/System/Library
+/System/Library/Caches
+/System/Library/Caches/com.apple.xpcd
+/System/Library/Caches/com.apple.xpcd/xpcd_cache.dylib
+/System/Library/Caches/com.apple.dyld
+/System/Library/Caches/com.apple.dyld/enable-dylibs-to-override-cache
+/System/Library/LaunchDaemons
+/System/Library/LaunchDaemons/io.pangu.axe.untether.plist
+/usr
+/usr/lib
+/usr/lib/libmis.dylib

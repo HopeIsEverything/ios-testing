@@ -1,0 +1,11 @@
+Origin: Dev Team
+Label: Dev Team
+Suite: stable
+Version: 1.0
+Architectures: iphoneos-arm
+Components: main
+Description: iPhone Dev Team
+Support: http://cydia.saurik.com/support/*
+MD5Sum:
+ e83dbcf2a53cae5e443d483858d87852 683 Packages
+ 0dd50256d3ddb5f5e36766b93dee2528 517 Packages.bz2

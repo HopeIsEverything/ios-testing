@@ -1,0 +1,24 @@
+Origin: ModMyi.com
+Label: ModMyi
+Suite: stable
+Codename: stable
+Version: 1.0
+Support: http://cydia.saurik.com/support/*
+Architectures: iphoneos-arm
+Components: main
+Description: ModMyi.com - we host your apps! Email us.
+MD5Sum:
+ 8326db3b5d22fec7599aac2fc1c80ab1 18541992 main/binary-iphoneos-arm/Packages
+ 49681fde21c96b6dd89cdbeec64ccc3a 3189444 main/binary-iphoneos-arm/Packages.bz2
+ 6678c94184409ab4a96b32881875d3a4 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ a390a72660a49d99b3507975b2b6a166 160 main/binary-iphoneos-arm/Release
+SHA1:
+ bb20816780ee8bad1a60dd917fadacba65679357 18541992 main/binary-iphoneos-arm/Packages
+ e079ab06ad02dd2077320336ed70e49448b90729 3189444 main/binary-iphoneos-arm/Packages.bz2
+ 82a2858264b5cc3c44b62c1c9650080900b683a0 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ 141b2fb5cd9ae109b56ec0add058b1a367053939 160 main/binary-iphoneos-arm/Release
+SHA256:
+ b878f6b84bd2faea49a9d3c817a8c43ed868265c115f41ebb41e8ec710740009 18541992 main/binary-iphoneos-arm/Packages
+ 2b3619ebc218aacbbbc2e22c002276b2cc1af147d542b6d85d35356f11f8c4cb 3189444 main/binary-iphoneos-arm/Packages.bz2
+ 64f298124eb4308ef4e3caf9c847bcfbf937cfa30334c99a825f6139a0b4c5fd 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ d48c8975b62b3b5559df5b65eca1c7af20c78336170e87dc5801e87871c20256 160 main/binary-iphoneos-arm/Release

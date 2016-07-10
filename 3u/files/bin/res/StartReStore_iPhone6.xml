@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Request</key>
+	<string>StartRestore</string>
+	<key>RestoreOptions</key>
+	<dict>
+		<key>AuthInstallRestoreBehavior</key>
+		<string>Erase</string>
+		<key>AutoBootDelay</key>
+		<integer>0</integer>
+		<key>CreateFilesystemPartitions</key>
+		<true/>
+		<key>FirmwareDirectory</key>
+		<string>C:\Users\edison\AppData\Local\Temp\PerEBFC.tmp\Firmware</string>
+		<key>FlashNOR</key>
+		<true/>
+		<key>InstallDiags</key>
+		<false/>
+		<key>NORImageType</key>
+		<string>production</string>
+		<key>PersonalizedRestoreBundlePath</key>
+		<string>C:\Users\edison\AppData\Local\Temp\PerEBFC.tmp</string>
+		<key>RestoreBootArgs</key>
+		<string>rd=md0 nand-enable-reformat=1 -progress</string>
+		<key>RestoreBundlePath</key>
+		<string>C:\Users\edison\AppData\Local\Temp\PerEBFC.tmp</string>
+		<key>RootToInstall</key>
+		<false/>
+		<key>SourceRestoreBundlePath</key>
+		<string>C:\ProgramData\Apple Computer\iTunes\iPhone Temporary Files 6</string>
+		<key>SystemImage</key>
+		<true/>
+		<key>SystemPartitionPadding</key>
+		<dict>
+			<key>128</key>
+			<integer>1280</integer>
+			<key>16</key>
+			<integer>160</integer>
+			<key>32</key>
+			<integer>320</integer>
+			<key>64</key>
+			<integer>640</integer>
+			<key>8</key>
+			<integer>80</integer>
+		</dict>
+		<key>UUID</key>
+		<string>4A8EE799-5967-644D-B46C-626C00763136</string>
+		<key>UpdateBaseband</key>
+		<true/>
+		<key>UserLocale</key>
+		<string>zh_CN</string>
+		<key>WaitForDeviceConnectionToFinishStateMachine</key>
+		<false/>
+	</dict>
+	<key>RestoreProtocolVersion</key>
+	<integer>13</integer>
+</dict>
+</plist>

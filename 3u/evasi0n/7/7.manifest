@@ -1,0 +1,9 @@
+-rw-r--r-- 00000000 00000000      40 1362129543 1362129543 1362129543 (002d56a2bb17e8d9918f9821ec9806c8b8f89476)MediaDomain::Media/Recordings/.haxx/var/evasi0n/udid
+drwxr-xr-x 000001f5 000001f5       0 1362129543 1362129543 1362129543 (8a87569fbfd3b510bafe78ba05829b646014e49b)MediaDomain::Media
+drwxr-xr-x 000001f5 000001f5       0 1362129543 1362129543 1362129543 (5fc90d0ef2e4ffb0f7634cc09686c90386ca4360)MediaDomain::Media/Recordings
+lrw-r--r-- 000001f5 000001f5       0 1362129543 1362129543 1362129543 (d3b010fafb215549c624b0cae232c147423849d8)MediaDomain::Media/Recordings/.haxx/private/etc/launchd.conf -> /private/var/evasi0n/launchd.conf
+-rw-r--r-- 00000000 00000000     360 1362129543 1362129543 1362129543 (feac718a90ac0bf03f47e7826d56bdfb28e20dcf)MediaDomain::Media/Recordings/.haxx/var/evasi0n/launchd.conf
+lrw-r--r-- 00000000 00000000       0 1362129543 1362129543 1362129543 (8aeba8d12af861085079829df03174c3452c36d9)MediaDomain::Media/Recordings/.haxx -> /
+drwxr-xr-x 00000000 00000000       0 1362129543 1362129543 1362129543 (b7ce807f634dbf321bb1361c11e48b2ac3961704)MediaDomain::Media/Recordings/.haxx/var/evasi0n
+-rw-r--r-- 00000000 00000000   12288 1362129543 1362129543 1362129543 (fd59caedb9ff252576494a51984cdba0e42e56b4)MediaDomain::Media/Recordings/.haxx/var/evasi0n/amfi.dylib
+-rwxr-xr-x 00000000 00000000  123072 1362129543 1362129543 1362129543 (8946ac0599056df2b196f38965ae5eb22fff6548)MediaDomain::Media/Recordings/.haxx/var/evasi0n/evasi0n

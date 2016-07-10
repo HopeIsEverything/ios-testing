@@ -1,0 +1,28 @@
+Origin: ZodTTD & MacCiti
+Label: ZodTTD & MacCiti
+Suite: stable
+Codename: stable
+Version: 1.0
+Date: Mon, 23 Jun 2014 05:00:25 UTC
+Architectures: iphoneos-arm
+Components: main
+Description: ZodTTD.com & MacCiti.com Public Repo
+Support: https://cydia.saurik.com/api/support/*
+MD5Sum:
+ 0751efe1630b13db524b9d8012820f21 11027803 main/binary-iphoneos-arm/Packages
+ 82c0b7146455b3d49fce4da92563c93a 2411942 main/binary-iphoneos-arm/Packages.gz
+ 621e99c4d6d497a5d17c7735454bb72f 1926223 main/binary-iphoneos-arm/Packages.bz2
+ 726d040b6219923edb5380314f8c7f66 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ 5c64ce2403781a259df981803d35290f 171 main/binary-iphoneos-arm/Release
+SHA1:
+ 1533f74446a2e313ffd0e597250244bbc37d8648 11027803 main/binary-iphoneos-arm/Packages
+ 4a9783417b5e45e64a57c9bace19245bab10a918 2411942 main/binary-iphoneos-arm/Packages.gz
+ 3bc2d06652b30fbcaaf532e096b1aa91f804f0b0 1926223 main/binary-iphoneos-arm/Packages.bz2
+ 33c98a8aa92c20467b62bf473e907cdb4b2b77e4 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ 9fe1d29700e6d8a8a1b4169c1c811ae1b43898b6 171 main/binary-iphoneos-arm/Release
+SHA256:
+ b778d0b2c185a686982bef4a8778d29a46a809401d04236588a1d03c64060b3d 11027803 main/binary-iphoneos-arm/Packages
+ 42b4bcb6bd63defba56fa7a125487c6c7eb4a0e8dd996ed9c990509665e5aa70 2411942 main/binary-iphoneos-arm/Packages.gz
+ 1234b6ecd08cb5c7c15f07b69fb82fe32c18f069c05d4b94fca3c4110ffa6fc5 1926223 main/binary-iphoneos-arm/Packages.bz2
+ abd9a32eb8cdcc03373087e405088ffc7c3a96d123c4ad4f741c1810325ab3aa 53337 main/binary-iphoneos-arm/Packages.diff/Index
+ 29df7ac6aac6df9ae2c26ac029e4371fc6c148009259c332043092d6669d7e04 171 main/binary-iphoneos-arm/Release

@@ -1,1 +1,1 @@
-
+#define LC_SOURCE_VERSION 1.0.0

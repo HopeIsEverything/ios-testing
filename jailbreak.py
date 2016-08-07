@@ -8,13 +8,11 @@ import plist, plistlib
 from time import sleep
 import tempfile
 import shutil
-import jsonpickle
 
 current_dir = os.getcwd()
 
 descriptor = None
 port = 0
-descriptor_json = ""
 
 tmp_dir = tempfile.mkdtemp()
 print(tmp_dir)
@@ -48,6 +46,8 @@ def get_ip():
 
 ld = get_lockdown()
 
+print(ld.start_service(AfcClient).port)
+
 afc = get_afc()
 fr = get_fr()
 drr = get_drr()
@@ -56,13 +56,15 @@ ip = get_ip()
 afc_unrestricted = None
 
 def upload_recursively(folder, destination):
-        for x in os.walk(folder):
-                afc.make_directory(destination + "/" + x[0])
-
-                for file in x[2]:
-                        with afc.open(destination + "/" + x[0] + "/" + file, "w+") as rfile:
-                                local_file = open(x[0] + "/" + file, "r+")
-                                rfile.write(local_file.read())
+	for x in os.walk(folder):
+		afc.make_directory(destination + "/" + x[0])
+		print("Made directory " + x[0])
+	
+		for file in x[2]:
+			print("Making file " + file)
+			with afc.open(destination + "/" + x[0] + "/" + file, "w") as rfile:
+				with open(x[0] + "/" + file, "r+") as lfile:
+					rfile.write(lfile.read())
 
 def upload_app_stage_1():
 	print("== Uploading Juniper app (1/2) ==")
@@ -284,8 +286,6 @@ def configure_system_stage_2():
 	
 	ios_version = ld.get_value(None, "BuildVersion").get_value()
 	
-	print("God fucking dammit")
-	
 	with open("com.apple.backboardd.plist", "w") as backboardd:
 		backboardd.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 		backboardd.write("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">")
@@ -325,6 +325,9 @@ def configure_system_stage_2():
 	
 	print(" - Rebooting, please click on the Juniper app when I say so!")
 	
+	descriptor_last = ld.start_service(AfcClient)
+	descriptor_help = descriptor_last
+	print(descriptor_last.port)
 	drr.restart(0)
 
 def own_block_device():
@@ -332,8 +335,12 @@ def own_block_device():
 	
 	ld = get_lockdown()
 	
+	print(ld.start_service(AfcClient).port)
+	
 	afc = get_afc()
 	drr = get_drr()
+	
+	print(descriptor_help.port)
 	
 	while True:
 		try:
@@ -357,7 +364,7 @@ def own_block_device():
 			afc_unrestricted = AfcClient(iDevice(), descriptor)
 			
 			print("We actually fuckin' did it.")
-			print(dir(afc_unrestricted))
+			print(afc_unrestricted.read_directory("/"))
 			
 			break
 		except:
@@ -365,13 +372,11 @@ def own_block_device():
 	
 	while True:
 		try:
-			afc_unresricted.symlink("..", "/var/mobile/Media/testy")
-			afc_unresricted.read_directory("/var/mobile/Media/testy")
 			afc_unresricted.symlink("../../../../../dev/rdisk0s1s1", "/var/mobile/Library/Logs/AppleSupport")
-			afc_unresricted.remove_path("/var/mobile/Media/testy")
 			
 			break
-		except:
+		except AfcError, e:
+			print(e)
 			pass
 	
 	drr.restart(0)

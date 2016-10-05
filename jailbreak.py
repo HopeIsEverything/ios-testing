@@ -11,9 +11,6 @@ import shutil
 
 current_dir = os.getcwd()
 
-descriptor = None
-port = 0
-
 tmp_dir = tempfile.mkdtemp()
 print(tmp_dir)
 os.chdir(tmp_dir)
@@ -46,32 +43,32 @@ def get_ip():
 
 ld = get_lockdown()
 
-print(ld.start_service(AfcClient).port)
-
 afc = get_afc()
 fr = get_fr()
 drr = get_drr()
 ip = get_ip()
+
+descriptor = None
+port = 0
 
 afc_unrestricted = None
 
 def upload_recursively(folder, destination):
 	for x in os.walk(folder):
 		afc.make_directory(destination + "/" + x[0])
-		print("Made directory " + x[0])
 	
 		for file in x[2]:
-			print("Making file " + file)
 			with afc.open(destination + "/" + x[0] + "/" + file, "w") as rfile:
 				with open(x[0] + "/" + file, "r+") as lfile:
-					rfile.write(lfile.read())
+					data = lfile.read()
+					rfile.write(data)
 
 def upload_app_stage_1():
 	print("== Uploading Juniper app (1/2) ==")
 	
 	print(" - Extracting IPA")
 	
-	shutil.copyfile(os.path.join(current_dir, "jailbreak.ipa"), "jailbreak.ipa")
+	shutil.copyfile(os.path.join(current_dir, "resources", "jailbreak.ipa"), "jailbreak.ipa")
 	
 	with ZipFile("jailbreak.ipa", "r") as ipa:
 		ipa.extractall(tmp_dir)
@@ -95,7 +92,7 @@ def upload_app_stage_3(order, message):
 	print(" - Modifying files")
 	
 	os.chdir(current_dir)
-	with afc.open("Downloads/sandbox.dylib", "w+") as sandbox, open("codesign/sandbox.dylib", "r") as sandbox_local:
+	with afc.open("Downloads/sandbox.dylib", "w+") as sandbox, open("resources/codesign/sandbox.dylib", "r") as sandbox_local:
 		sandbox.write(sandbox_local.read())
 	os.chdir(tmp_dir)
 	
@@ -193,33 +190,38 @@ def race_installd(zip_file, destination):
 			
 			try:
 				ip.install("/PublicStaging/" + zip_file, options)
-				print("Tried to install the file.")
 			except:
 				pass
 			
 			while True:
-				tmp_contents = afc.read_directory("/tmp")
-				matching_entries = [i for i in tmp_contents if i.find("install_staging.") != -1]
-				
-				if len(matching_entries) is 0:
-					continue
-				
-				entry = matching_entries[0]
-				
-				staging_contents = afc.read_directory("/tmp/" + entry)
-				
-				if len(staging_contents) is 2:
-					print(" - Succeeded before extraction!")
-					afc.symlink("../../../" + destination, "/tmp/" + entry + "/foo_extracted")
-					raise StopIteration
-				else:
-					foo_contents = afc.read_directory("/tmp/" + entry + "/foo_extracted")
+				try:
+					tmp_contents = afc.read_directory("/tmp")
+					matching_entries = [i for i in tmp_contents if i.find("install_staging.") != -1]
 					
-					if len(foo_contents) is 2:
-						print(" - Succeeded during extraction!")
-						afc.rename_path("/tmp/" + entry + "/foo_extracted", "/tmp/" + entry + "/foo_extracted.old")
+					if len(matching_entries) is 0:
+						continue
+					
+					entry = matching_entries[0]
+					
+					staging_contents = afc.read_directory("/tmp/" + entry)
+					
+					if len(staging_contents) is 2:
+						print(" - Succeeded before extraction!")
 						afc.symlink("../../../" + destination, "/tmp/" + entry + "/foo_extracted")
 						raise StopIteration
+					else:
+						foo_contents = afc.read_directory("/tmp/" + entry + "/foo_extracted")
+						
+						if len(foo_contents) is 2:
+							print(" - Succeeded during extraction!")
+							afc.rename_path("/tmp/" + entry + "/foo_extracted", "/tmp/" + entry + "/foo_extracted.old")
+							afc.symlink("../../../" + destination, "/tmp/" + entry + "/foo_extracted")
+							raise StopIteration
+				except AfcError, e:
+					if e.code is 10:
+						raise StopIteration
+					else:
+						continue
 	except StopIteration:
 		return True
 
@@ -325,59 +327,49 @@ def configure_system_stage_2():
 	
 	print(" - Rebooting, please click on the Juniper app when I say so!")
 	
-	descriptor_last = ld.start_service(AfcClient)
-	descriptor_help = descriptor_last
-	print(descriptor_last.port)
 	drr.restart(0)
 
-def own_block_device():
-	print(" - Waiting for reboot...")
-	
+def get_unrestricted_afc():
 	ld = get_lockdown()
-	
-	print(ld.start_service(AfcClient).port)
-	
-	afc = get_afc()
-	drr = get_drr()
-	
-	print(descriptor_help.port)
 	
 	while True:
 		try:
 			descriptor = ld.start_service(AfcClient)
 			port = descriptor.port
 		except:
-			print("Port: " + str(port))
 			break
 	
 	afc = get_afc()
 	
-	with afc.open("Downloads/Jailbreaker.app/Jailbreaker", "w") as executable:
+	with afc.open("/Downloads/Jailbreaker.app/Jailbreaker", "w") as executable:
 		executable.write("#!/usr/libexec/afcd -S -d / -p " + str(port) + " # -- ")
 	
 	print("== Alright, click on the icon! ==")
 	
-	sleep(1)
-	print("We are now trying to get the client")
 	while True:
 		try:
 			afc_unrestricted = AfcClient(iDevice(), descriptor)
 			
-			print("We actually fuckin' did it.")
-			print(afc_unrestricted.read_directory("/"))
-			
-			break
+			return afc_unrestricted
 		except:
 			pass
+
+def own_block_device():
+	print(" - Waiting for reboot...")
 	
-	while True:
-		try:
-			afc_unresricted.symlink("../../../../../dev/rdisk0s1s1", "/var/mobile/Library/Logs/AppleSupport")
-			
-			break
-		except AfcError, e:
-			print(e)
-			pass
+	ld = get_lockdown()
+	
+	afc = get_afc()
+	drr = get_drr()
+	
+	afc_unrestricted = get_unrestricted_afc()
+	
+	log_listing = afc_unrestricted.read_directory("/var/mobile/Library/Logs")
+	
+	if "AppleSupport_moved" not in log_listing:
+		afc_unrestricted.rename_path("/var/mobile/Library/Logs/AppleSupport", "/var/mobile/Library/Logs/AppleSupport_moved")
+		
+		afc_unrestricted.symlink("../../../../../dev/rdisk0s1s1", "/var/mobile/Library/Logs/AppleSupport")
 	
 	drr.restart(0)
 
@@ -387,7 +379,33 @@ def modify_root_filesystem():
 	afc = get_afc()
 	drr = get_drr()
 	
-	print("Well, I mean we got this far.")
+	afc_unrestricted = get_unrestricted_afc()
+	
+	afc_unrestricted.remove_path("/var/mobile/Library/Logs/AppleSupport")
+	afc_unrestricted.rename_path("/var/mobile/Library/Logs/AppleSupport_moved", "/var/mobile/Library/Logs/AppleSupport")
+	
+	try:
+		with afc_unrestricted.open("/dev/rdisk0s1s1", "rb") as block:
+			with open(os.path.join(tmp_dir, "block")) as local_block:
+				block_info = afc_unrestricted.get_file_info("/dev/rdisk0s1s1")
+				
+				if block_info[0] == "st_size":
+					block_size = block_info[1]
+				else:
+					print("What the fuck")
+					return
+				
+				with tqdm(total = block_size) as pbar:
+					chunk = block.read(32768)
+					
+					if not chunk:
+						raise StopIteration
+					
+					local_block.write(chunk)
+					
+					pbar.update(32768)
+	except StopIteration:
+		print("We successfully transferred the block device!")
 
 upload_app_stage_1()
 upload_app_stage_2()

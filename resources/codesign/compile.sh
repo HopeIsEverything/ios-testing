@@ -19,7 +19,9 @@ amfi+="-alias,_kCFUserNotificationTokenKey,_kMISValidationOptionLogResourceError
 amfi+="-alias,_kCFUserNotificationTokenKey,_kMISValidationOptionUniversalFileOffset,"
 amfi+="-alias,_kCFUserNotificationTokenKey,_kMISValidationOptionValidateSignatureOnly"
 
-gcc -dynamiclib base.c -o sandbox.dylib -Wl,$sandbox -arch armv7 -nostdlib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk -framework CoreFoundation -lm -install_name /usr/lib/system/libsystem_sandbox.dylib -current_version 1.0 -compatibility_version 1.0
-gcc -dynamiclib base.c -o amfi.dylib -Wl,$amfi -arch armv7 -nostdlib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk -framework CoreFoundation -lm -install_name /usr/lib/libmis.dylib -current_version 1.0 -compatibility_version 1.0
+isysroot_location="/Applications/Xcode-5.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk"
+
+gcc -dynamiclib base.c -o sandbox.dylib -Wl,$sandbox -arch armv7 -nostdlib -isysroot $isysroot_location -framework CoreFoundation -lm -install_name /usr/lib/system/libsystem_sandbox.dylib -current_version 1.0 -compatibility_version 1.0
+gcc -dynamiclib base.c -o amfi.dylib -Wl,$amfi -arch armv7 -nostdlib -isysroot $isysroot_location -framework CoreFoundation -lm -install_name /usr/lib/libmis.dylib -current_version 1.0 -compatibility_version 1.0
 
 echo "Compiled successfully!"

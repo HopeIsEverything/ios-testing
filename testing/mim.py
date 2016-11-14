@@ -5,6 +5,10 @@ import sys
 import imobiledevice
 from imobiledevice import *
 
+from plist import Dict
+
+from time import sleep
+
 reload(sys)
 
 sys.setdefaultencoding("UTF8")
@@ -65,12 +69,29 @@ mim = get_mim(ld)
 
 upload(dmg_name, dmg_dest)
 
-with open(signature_name, "rb") as sig:
-	signature = sig.read()
-print(signature)
+print("== Current mount status ==")
 
 print(mim.lookup_image("Developer"))
-print(mim.mount_image(dmg_dest, signature, "Developer"))
+
+print("== Building mount PLIST ==")
+mount_plist = Dict()
+
+mount_plist["Command"] = "MountImage"
+mount_plist["ImageType"] = "Developer"
+
+mount_plist["ImagePath"] = "/var/mobile/Media/PublicStaging/staging.dimage"
+
+with open(signature_name, "rb") as sig:
+	signature = sig.read()
+
+print(" - Signature:")
+print(signature)
+
+mount_plist["ImageSignature"] = sig
+
+mim.send(mount_plist)
+
+sleep(5)
 
 result = mim.lookup_image("Developer")
 

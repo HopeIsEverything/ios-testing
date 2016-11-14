@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sandbox="-alias,_kCFBooleanTrue,_SANDBOX_CHECK_NO_REPORT,"
+sandbox+="-alias,_kCFBooleanTrue,_APP_SANDBOX_READ,"
 sandbox+="-alias,_sync,_sandbox_check,"
 sandbox+="-alias,_sync,_sandbox_extension_consume,"
 sandbox+="-alias,_sync,_sandbox_extension_issue_file,"

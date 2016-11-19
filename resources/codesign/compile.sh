@@ -23,5 +23,6 @@ isysroot_location="/Applications/Xcode-5.app/Contents/Developer/Platforms/iPhone
 
 gcc -dynamiclib base.m -o sandbox.dylib -Wl,$sandbox -arch armv7 -isysroot $isysroot_location -framework CoreFoundation -install_name /usr/lib/system/libsystem_sandbox.dylib -current_version 1.0 -compatibility_version 1.0
 gcc -dynamiclib base.m -o amfi.dylib -Wl,$amfi -arch armv7 -isysroot $isysroot_location -framework CoreFoundation -framework Foundation -lm -install_name /usr/lib/libmis.dylib -current_version 1.0 -compatibility_version 1.0
+gcc -dynamiclib exec.m -o exec.dylib -arch armv7 -isysroot $isysroot_location -framework CoreFoundation -framework Foundation
 
 echo "Compiled successfully!"

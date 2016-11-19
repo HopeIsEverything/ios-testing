@@ -2,7 +2,7 @@
 
 #define LC_SOURCE_VERSION 1.0.0
 
-int main()
+static void __attribute__((constructor)) initialize(void)
 {
 	NSLog(@"I loaded. :)");
 }

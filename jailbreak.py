@@ -313,8 +313,6 @@ def configure_system_stage_2():
 		backboardd.write("</dict>\n")
 		backboardd.write("</plist>")
 	
-	call(["fallocate", "-l", "10M", "bigfile"])
-	
 	with ZipFile("caches.zip", "w") as caches:
 		os.chdir("var/mobile/Library/Caches")
 		caches.write("com.apple.mobile.installation.plist")
@@ -323,7 +321,6 @@ def configure_system_stage_2():
 	
 	with ZipFile("preferences.zip", "w") as preferences:
 		preferences.write("com.apple.backboardd.plist")
-		preferences.write("bigfile")
 	
 	print(" - Attempting to race installd (caches)")
 	
@@ -429,6 +426,14 @@ def modify_root_filesystem():
 	except StopIteration:
 		print("We successfully transferred the block device!")
 
-upload_app_stage_1()
-upload_app_stage_2()
-upload_app_stage_3()
+with afc.open("Downloads/sandbox.dylib") as sandbox, open("/home/lia/Documents/ios-testing/resources/codesign/sandbox.dylib") as sandbox_local:
+	data = sandbox_local.read()
+	sandbox.write(data)
+
+k = get_unrestricted_afc()
+
+
+
+#upload_app_stage_1()
+#upload_app_stage_2()
+#upload_app_stage_3()

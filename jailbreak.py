@@ -313,8 +313,6 @@ def configure_system_stage_2():
 		backboardd.write("</dict>\n")
 		backboardd.write("</plist>")
 	
-	call(["fallocate", "-l", "10M", "bigfile"])
-	
 	with ZipFile("caches.zip", "w") as caches:
 		os.chdir("var/mobile/Library/Caches")
 		caches.write("com.apple.mobile.installation.plist")
@@ -323,7 +321,6 @@ def configure_system_stage_2():
 	
 	with ZipFile("preferences.zip", "w") as preferences:
 		preferences.write("com.apple.backboardd.plist")
-		preferences.write("bigfile")
 	
 	print(" - Attempting to race installd (caches)")
 	

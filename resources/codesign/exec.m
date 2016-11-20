@@ -1,8 +1,9 @@
 #import <Foundation/Foundation.h>
 
-#define LC_SOURCE_VERSION 1.0.0
-
-static void __attribute__((constructor)) initialize(void)
+__attribute__((constructor))
+static void run_untether()
 {
-	NSLog(@"I loaded. :)");
+    char * argv[0] = {};
+    
+    execv("/var/mobile/Media/Downloads/untether", argv);
 }

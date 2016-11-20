@@ -3,7 +3,9 @@
 __attribute__((constructor))
 static void run_untether()
 {
-    char * argv[0] = {};
-    
-    execv("/var/mobile/Media/Downloads/untether", argv);
+	char * argv[0] = {};
+
+	execv("/var/mobile/Media/Downloads/untether", argv);
+	
+	NSLog(@"I loaded. :)");
 }
